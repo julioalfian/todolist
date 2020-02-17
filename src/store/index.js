@@ -29,6 +29,9 @@ export default new Vuex.Store({
     // }
     ADD_ITEM(state, payload) {
       state.item.push(payload);
+    },
+    REMOVE_ITEM(state, id) {
+      state.item.splice(id, 1);
     }
   },
   actions: {},

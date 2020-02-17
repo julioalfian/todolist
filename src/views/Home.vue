@@ -82,14 +82,22 @@
             <div class="edit">
               <v-icon>edit</v-icon>
             </div>
-            <div class="delete">
+            <div class="delete" v-on:click="deleteItemStore(idx)">
               <v-icon>delete</v-icon>
             </div>
           </div>
         </transition-group>
       </draggable>
     </div>
-    <v-btn absolute dark fab bottom right color="pink" v-on:click="greet">
+    <v-btn
+      absolute
+      dark
+      fab
+      bottom
+      right
+      color="pink"
+      v-on:click="addItemStore"
+    >
       <v-icon>add</v-icon>
     </v-btn>
   </div>
@@ -119,7 +127,8 @@ export default {
       priorities: "",
       date: "",
       menu2: "",
-      status: "todo"
+      status: "",
+      errorMessage: ""
     };
   },
   components: {
@@ -135,9 +144,10 @@ export default {
 
   methods: {
     ...mapMutations({
-      addItemsList: "ADD_ITEM"
+      addItemsList: "ADD_ITEM",
+      removeItemList: "REMOVE_ITEM"
     }),
-    greet: function() {
+    addItemStore: function() {
       // `this` inside methods points to the Vue instance
       // alert("Hello !");
       const newList = {
@@ -145,10 +155,24 @@ export default {
         desc: this.desc,
         priority: this.priorities,
         date: this.date,
-        status: this.status
+        status: "todos"
       };
       console.log(newList);
-      this.addItemsList(newList);
+      if (newList != null) {
+        this.addItemsList(newList);
+        this.todos = "";
+        this.desc = "";
+        this.priorities = "";
+        this.date = "";
+        this.status = "";
+      } else {
+        this.errorMessage = "please complete all forms";
+        alert(this.errorMessage);
+      }
+    },
+    deleteItemStore: function(id) {
+      console.log(id);
+      this.removeItemList(id);
     }
   }
 };
@@ -200,6 +224,7 @@ export default {
     display: flex;
     justify-content: center;
     align-item: center;
+    cursor: pointer;
   }
   .edit {
     i {
