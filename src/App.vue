@@ -1,32 +1,20 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/about">About</router-link>
-    </div>-->
     <v-app id="inspire">
       <v-navigation-drawer v-model="drawer" app clipped>
         <v-list dense>
-          <router-link to="/">
-            <v-list-item>
-              <v-list-item-action>
-                <v-icon>dashboard</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Home</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
-          <router-link to="/about">
-            <v-list-item>
-              <v-list-item-action>
-                <v-icon>settings</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>About</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
+          <v-list-item-group v-for="(item, idx) in menus" :key="idx">
+            <router-link :to="item.url">
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </router-link>
+          </v-list-item-group>
         </v-list>
       </v-navigation-drawer>
 
@@ -39,14 +27,14 @@
 
       <v-content>
         <v-container fluid fill-height>
-          <v-layout align-center justify-center>
+          <v-layout>
             <router-view />
           </v-layout>
         </v-container>
       </v-content>
 
       <v-footer app>
-        <span>&copy; 2019</span>
+        <span>&copy; 2020</span>
       </v-footer>
     </v-app>
   </div>
@@ -64,7 +52,11 @@ export default {
     iconfont: "mdi"
   },
   data: () => ({
-    drawer: null
+    drawer: null,
+    menus: [
+      { name: "Home", icon: "dashboard", url: "/" },
+      { name: "About", icon: "settings", url: "/about" }
+    ]
   })
 };
 </script>
@@ -75,6 +67,14 @@ export default {
 
 body {
   font-family: "Roboto", sans-serif;
+
+  a {
+    text-decoration: none;
+    color: white;
+  }
+  .v-layout {
+    position: relative;
+  }
 }
 
 // #nav {
