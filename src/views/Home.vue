@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="input-new">
-      <v-form v-model="valid">
+      <v-form>
         <v-container>
           <v-row>
             <v-col cols="12" md="4">
@@ -58,19 +58,19 @@
         </v-container>
       </v-form>
     </div>
-    <div class="result">
+    <!-- <div class="result">
       {{ todos }}
       {{ desc }}
       {{ priorities }}
       {{ date }}
       {{ status }}
-    </div>
+    </div> -->
     <div class="item-todo">
-      <draggable v-model="exampleList" class="medium-area">
+      <draggable v-model="list" class="medium-area">
         <transition-group name="list-complete">
           <div
-            v-for="item in list"
-            :key="item"
+            v-for="(item, idx) in list"
+            :key="idx"
             class="drag-item flex flex-justify-betweeen"
             @dragend="log('a')"
           >
@@ -89,7 +89,7 @@
         </transition-group>
       </draggable>
     </div>
-    <v-btn absolute dark fab bottom right color="pink">
+    <v-btn absolute dark fab bottom right color="pink" v-on:click="greet">
       <v-icon>add</v-icon>
     </v-btn>
   </div>
@@ -118,10 +118,8 @@ export default {
       desc: "",
       priorities: "",
       date: "",
+      menu2: "",
       status: "todo"
-
-      // test: [{ name: "julioalfian", icon: "dwicahya" }],
-      // exampleList: ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
     };
   },
   components: {
@@ -132,22 +130,26 @@ export default {
     ...mapState({
       list: state => state.item,
       priority: state => state.priority
-    }),
-    listS: {
-      get() {
-        return this.list;
-      },
-      set(newValue) {
-        const listData = newValue;
-        this.addItemsList(listData);
-      }
-    }
+    })
   },
 
   methods: {
     ...mapMutations({
       addItemsList: "ADD_ITEM"
-    })
+    }),
+    greet: function() {
+      // `this` inside methods points to the Vue instance
+      // alert("Hello !");
+      const newList = {
+        task: this.todos,
+        desc: this.desc,
+        priority: this.priorities,
+        date: this.date,
+        status: this.status
+      };
+      console.log(newList);
+      this.addItemsList(newList);
+    }
   }
 };
 </script>
