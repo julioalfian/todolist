@@ -63,7 +63,9 @@
       </v-form>
     </div>
 
-    <v-alert type="error" v-show="errorMessage">Error, all form must be filled.</v-alert>
+    <template>
+      <errorMessage v-show="errorMessage" msg="Error, all form must be filled."></errorMessage>
+    </template>
 
     <div class="item-todo">
       <draggable class="medium-area">
@@ -201,6 +203,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import draggable from "vuedraggable";
+import errorMessage from "../components/ErrorMessege";
 
 export default {
   name: "todolist",
@@ -227,7 +230,8 @@ export default {
     };
   },
   components: {
-    draggable
+    draggable,
+    errorMessage
   },
 
   computed: {
@@ -254,7 +258,7 @@ export default {
         status: "todos"
       };
       console.log(newList.length);
-      if (newList.task.length > 0) {
+      if (newList.task.length > 10) {
         this.errorMessage = false;
         this.addItemsList(newList);
         this.todos = "";
