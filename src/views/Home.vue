@@ -55,7 +55,7 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
+                <v-date-picker v-model="date" :show-current="showCurrent" @input="menu2 = false"></v-date-picker>
               </v-menu>
             </v-col>
           </v-row>
