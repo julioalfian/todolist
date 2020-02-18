@@ -115,48 +115,64 @@
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field label="Task" :value="list[indexList].task" required></v-text-field>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field label="Task" v-model="newtodos" required></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    label="Legal middle name"
-                    hint="example of helper text only on focus"
-                  ></v-text-field>
+
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field label="Description" v-model="newdesc" hint="Describe task in here"></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    label="Legal last name*"
-                    hint="example of persistent helper text"
-                    persistent-hint
+
+                <v-col cols="12" sm="12" md="6">
+                  <v-select
+                    v-model="newassign"
+                    :items="users"
+                    :rules="[v => !!v || 'Item is required']"
+                    label="Assign to"
                     required
-                  ></v-text-field>
+                  ></v-select>
                 </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Email*" required></v-text-field>
+
+                <v-col cols="12" sm="12" md="6">
+                  <v-select
+                    v-model="newpriorities"
+                    :items="priority"
+                    :rules="[v => !!v || 'Item is required']"
+                    label="Priority"
+                    required
+                  ></v-select>
                 </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Password*" type="password" required></v-text-field>
+
+                <v-col cols="12" sm="12" md="6">
+                  <v-select
+                    v-model="newstatus"
+                    :items="['todo', 'in-progress', 'done']"
+                    :rules="[v => !!v || 'Item is required']"
+                    label="Status"
+                    required
+                  ></v-select>
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required></v-select>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-autocomplete
-                    :items="[
-                      'Skiing',
-                      'Ice hockey',
-                      'Soccer',
-                      'Basketball',
-                      'Hockey',
-                      'Reading',
-                      'Writing',
-                      'Coding',
-                      'Basejump'
-                    ]"
-                    label="Interests"
-                    multiple
-                  ></v-autocomplete>
+
+                <v-col cols="12" sm="12" md="6">
+                  <v-menu
+                    v-model="newmenu2"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="newdate"
+                        label="Due Date"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="newdate" @input="newmenu2 = false"></v-date-picker>
+                  </v-menu>
                 </v-col>
               </v-row>
             </v-container>
@@ -165,7 +181,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-            <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+            <v-btn color="blue darken-1" text v-on:click="updateList(indexList)">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -178,16 +194,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from "@/components/HelloWorld.vue";
-
-// export default {
-//   name: "Home",
-//   components: {
-//     HelloWorld
-//   }
-// };
-
 import { mapState, mapMutations } from "vuex";
 import draggable from "vuedraggable";
 
@@ -205,7 +211,14 @@ export default {
       status: "",
       errorMessage: false,
       dialog: false,
-      indexList: 0
+      indexList: 0,
+      newtodos: "",
+      newdesc: "",
+      newassign: "",
+      newpriorities: "",
+      newdate: "",
+      newmenu2: "",
+      newstatus: ""
     };
   },
   components: {
@@ -223,7 +236,8 @@ export default {
   methods: {
     ...mapMutations({
       addItemsList: "ADD_ITEM",
-      removeItemList: "REMOVE_ITEM"
+      removeItemList: "REMOVE_ITEM",
+      updateItelList: "UPDATE_ITEM"
     }),
     addItemStore: function() {
       const newList = {
@@ -254,6 +268,25 @@ export default {
       console.log(index);
       this.dialog = true;
       this.indexList = index;
+      this.newtodos = this.list[index].task;
+      this.newdesc = this.list[index].desc;
+      this.newpriorities = this.list[index].priority;
+      this.newassign = this.list[index].assign;
+      this.newdate = this.list[index].date;
+      this.newstatus = this.list[index].status;
+    },
+    updateList: function(index) {
+      const newUpdateList = {
+        task: this.newtodos,
+        desc: this.newdesc,
+        priority: this.newpriorities,
+        assign: this.newassign,
+        date: this.newdate,
+        status: this.newstatus,
+        indexItem: index
+      };
+      this.updateItelList(newUpdateList);
+      this.dialog = false;
     }
   }
 };
@@ -288,6 +321,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  text-transform: capitalize;
   .todos {
     width: 35%;
   }

@@ -6,19 +6,19 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 	state: {
 		item: [{
-				task: "task 1",
-				desc: "desc 1",
+				task: "Task Title",
+				desc: "Task Description",
 				priority: "hight",
 				assign: "Julio",
 				date: "12/12/2020",
 				status: "todo"
 			},
 			{
-				task: "task 2",
-				desc: "desc 2",
+				task: "Task Title 2",
+				desc: "Task Description 2",
 				priority: "medium",
-				assign: "Louis",
-				date: "11/11/2020",
+				assign: "Julio",
+				date: "12/12/2020",
 				status: "in-progress"
 			}
 		],
@@ -26,14 +26,23 @@ export default new Vuex.Store({
 		user: ["Julio", "Louis", "CF", "Julian"]
 	},
 	mutations: {
-		// increment(state) {
-		// 	state.data++;
-		// }
 		ADD_ITEM(state, payload) {
 			state.item.push(payload);
 		},
 		REMOVE_ITEM(state, id) {
 			state.item.splice(id, 1);
+		},
+		UPDATE_ITEM(state, payload) {
+			console.log(payload);
+			const newItem = {
+				task: payload.task,
+				desc: payload.desc,
+				priority: payload.priority,
+				assign: payload.assign,
+				date: payload.date,
+				status: payload.status
+			};
+			state.item[payload.indexItem] = newItem;
 		}
 	},
 	actions: {},
