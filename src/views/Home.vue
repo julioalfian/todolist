@@ -4,20 +4,22 @@
       <v-form>
         <v-container>
           <v-row>
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="todos"
-                label="What need to be done?"
-                required
-              ></v-text-field>
+            <v-col cols="12" md="3">
+              <v-text-field v-model="todos" label="What need to be done?" required></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="desc"
-                label="Description"
+            <v-col cols="12" md="3">
+              <v-text-field v-model="desc" label="Description" required></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="2">
+              <v-select
+                v-model="assign"
+                :items="users"
+                :rules="[v => !!v || 'Item is required']"
+                label="Assign to"
                 required
-              ></v-text-field>
+              ></v-select>
             </v-col>
 
             <v-col cols="12" md="2">
@@ -33,7 +35,7 @@
             <v-col cols="12" md="2">
               <v-menu
                 v-model="menu2"
-                :close-on-content-click="true"
+                :close-on-content-click="false"
                 :nudge-right="40"
                 transition="scale-transition"
                 offset-y
@@ -48,25 +50,23 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker
-                  v-model="date"
-                  @input="menu2 = false"
-                ></v-date-picker>
+                <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
               </v-menu>
             </v-col>
           </v-row>
         </v-container>
       </v-form>
     </div>
+    <v-alert type="error" v-show="errorMessage">Error, all form must be filled.</v-alert>
     <!-- <div class="result">
       {{ todos }}
       {{ desc }}
       {{ priorities }}
       {{ date }}
       {{ status }}
-    </div> -->
+    </div>-->
     <div class="item-todo">
-      <draggable v-model="list" class="medium-area">
+      <draggable class="medium-area">
         <transition-group name="list-complete">
           <div
             v-for="(item, idx) in list"
@@ -76,10 +76,25 @@
           >
             <div class="todos">{{ item.task }}</div>
             <div class="desc">{{ item.desc }}</div>
-            <div class="priority">{{ item.priority }}</div>
+            <div class="priority">
+              <div v-if="item.priority == 'hight'" class="content hight">{{ item.priority }}</div>
+              <div v-else-if="item.priority == 'medium'" class="content medium">{{ item.priority }}</div>
+              <div v-else class="content low">{{ item.priority }}</div>
+            </div>
             <div class="date">{{ item.date }}</div>
-            <div class="status">{{ item.status }}</div>
-            <div class="edit">
+            <div class="assign">
+              <img src="../assets/user.png" alt />
+              <div class="text">{{ item.assign }}</div>
+            </div>
+            <div class="status">
+              <div v-if="item.status == 'todo'" class="content todo">{{ item.status }}</div>
+              <div
+                v-else-if="item.status == 'in-progress'"
+                class="content in-progress"
+              >{{ item.status }}</div>
+              <div v-else class="content done">{{ item.status }}</div>
+            </div>
+            <div class="edit" v-on:click="openModalDetail(idx)">
               <v-icon>edit</v-icon>
             </div>
             <div class="delete" v-on:click="deleteItemStore(idx)">
@@ -89,15 +104,74 @@
         </transition-group>
       </draggable>
     </div>
-    <v-btn
-      absolute
-      dark
-      fab
-      bottom
-      right
-      color="pink"
-      v-on:click="addItemStore"
-    >
+
+    <!-- modal detail -->
+    <v-row justify="center">
+      <v-dialog v-model="dialog" max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Detail</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field label="Task" :value="list[indexList].task" required></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field
+                    label="Legal middle name"
+                    hint="example of helper text only on focus"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field
+                    label="Legal last name*"
+                    hint="example of persistent helper text"
+                    persistent-hint
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Email*" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Password*" type="password" required></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required></v-select>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-autocomplete
+                    :items="[
+                      'Skiing',
+                      'Ice hockey',
+                      'Soccer',
+                      'Basketball',
+                      'Hockey',
+                      'Reading',
+                      'Writing',
+                      'Coding',
+                      'Basejump'
+                    ]"
+                    label="Interests"
+                    multiple
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+            <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+    <!--  -->
+    <v-btn absolute dark fab bottom right color="pink" v-on:click="addItemStore">
       <v-icon>add</v-icon>
     </v-btn>
   </div>
@@ -124,11 +198,14 @@ export default {
     return {
       todos: "",
       desc: "",
+      assign: "",
       priorities: "",
       date: "",
       menu2: "",
       status: "",
-      errorMessage: ""
+      errorMessage: false,
+      dialog: false,
+      indexList: 0
     };
   },
   components: {
@@ -138,7 +215,8 @@ export default {
   computed: {
     ...mapState({
       list: state => state.item,
-      priority: state => state.priority
+      priority: state => state.priority,
+      users: state => state.user
     })
   },
 
@@ -148,17 +226,17 @@ export default {
       removeItemList: "REMOVE_ITEM"
     }),
     addItemStore: function() {
-      // `this` inside methods points to the Vue instance
-      // alert("Hello !");
       const newList = {
         task: this.todos,
         desc: this.desc,
         priority: this.priorities,
+        assign: this.assign,
         date: this.date,
         status: "todos"
       };
-      console.log(newList);
-      if (newList != null) {
+      console.log(newList.length);
+      if (newList.task.length > 0 && newList.desc.length > 0) {
+        this.errorMessage = false;
         this.addItemsList(newList);
         this.todos = "";
         this.desc = "";
@@ -166,13 +244,16 @@ export default {
         this.date = "";
         this.status = "";
       } else {
-        this.errorMessage = "please complete all forms";
-        alert(this.errorMessage);
+        this.errorMessage = true;
       }
     },
     deleteItemStore: function(id) {
-      console.log(id);
       this.removeItemList(id);
+    },
+    openModalDetail: function(index) {
+      console.log(index);
+      this.dialog = true;
+      this.indexList = index;
     }
   }
 };
@@ -208,15 +289,65 @@ export default {
   justify-content: flex-start;
   align-items: center;
   .todos {
-    width: 40%;
+    width: 35%;
   }
   .desc {
     width: 20%;
   }
+  .assign,
   .priority,
   .date,
   .status {
     width: 10%;
+  }
+  .assign {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+  }
+  .priority {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .content {
+      font-size: 10px;
+      text-align: center;
+      padding: 6px 12px;
+      &.hight {
+        background: #f44336;
+      }
+      &.medium {
+        background: #ff9800;
+      }
+      &.low {
+        background: #4caf50;
+      }
+    }
+  }
+  .status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .content {
+      font-size: 10px;
+      text-align: center;
+      padding: 6px 12px;
+      &.todo {
+        background: #ff9800;
+      }
+      &.in-progress {
+        background: #3f51b5;
+      }
+      &.done {
+        background: #4caf50;
+      }
+    }
   }
   .edit,
   .delete {
@@ -228,12 +359,12 @@ export default {
   }
   .edit {
     i {
-      color: green;
+      color: #4caf50;
     }
   }
   .delete {
     i {
-      color: red;
+      color: #d50000;
     }
   }
 }
