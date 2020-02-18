@@ -14,12 +14,7 @@
             </v-col>
 
             <v-col cols="12" md="3">
-              <v-text-field
-                v-model="desc"
-                :rules="[() => desc.length > 0 || 'Required field']"
-                label="Description"
-                required
-              ></v-text-field>
+              <v-text-field v-model="desc" label="Description"></v-text-field>
             </v-col>
 
             <v-col cols="12" md="2">
@@ -67,14 +62,9 @@
         </v-container>
       </v-form>
     </div>
+
     <v-alert type="error" v-show="errorMessage">Error, all form must be filled.</v-alert>
-    <!-- <div class="result">
-      {{ todos }}
-      {{ desc }}
-      {{ priorities }}
-      {{ date }}
-      {{ status }}
-    </div>-->
+
     <div class="item-todo">
       <draggable class="medium-area">
         <transition-group name="list-complete">
@@ -89,12 +79,12 @@
             <div class="priority">
               <div v-if="item.priority == 'hight'" class="content hight">{{ item.priority }}</div>
               <div v-else-if="item.priority == 'medium'" class="content medium">{{ item.priority }}</div>
-              <div v-else class="content low">{{ item.priority }}</div>
+              <div v-else-if="item.priority == 'low'" class="content low">{{ item.priority }}</div>
             </div>
             <div class="date">{{ item.date }}</div>
             <div class="assign">
-              <img src="../assets/user.png" alt />
-              <div class="text">{{ item.assign }}</div>
+              <img v-if="item.assign" src="../assets/user.png" alt />
+              <div v-if="item.assign" class="text">{{ item.assign }}</div>
             </div>
             <div class="status">
               <div v-if="item.status == 'todo'" class="content todo">{{ item.status }}</div>
@@ -102,7 +92,7 @@
                 v-else-if="item.status == 'in-progress'"
                 class="content in-progress"
               >{{ item.status }}</div>
-              <div v-else class="content done">{{ item.status }}</div>
+              <div v-else-if="item.status == 'done'" class="content done">{{ item.status }}</div>
             </div>
             <div class="edit" v-on:click="openModalDetail(idx)">
               <v-icon>edit</v-icon>
@@ -135,13 +125,7 @@
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field
-                    label="Description"
-                    v-model="newdesc"
-                    :rules="[() => newdesc.length > 0 || 'Required field']"
-                    hint="Describe task in here"
-                    required
-                  ></v-text-field>
+                  <v-text-field label="Description" v-model="newdesc" hint="Describe task in here"></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="6">
@@ -208,7 +192,7 @@
       </v-dialog>
     </v-row>
     <!--  -->
-    <v-btn absolute dark fab bottom right color="pink" v-on:click="addItemStore">
+    <v-btn absolute dark fab bottom right color="pink" v-on:click="addItemStore" v-show="todos">
       <v-icon>add</v-icon>
     </v-btn>
   </div>
@@ -270,7 +254,7 @@ export default {
         status: "todos"
       };
       console.log(newList.length);
-      if (newList.task.length > 0 && newList.desc.length > 0) {
+      if (newList.task.length > 0) {
         this.errorMessage = false;
         this.addItemsList(newList);
         this.todos = "";

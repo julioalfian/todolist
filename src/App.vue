@@ -55,7 +55,7 @@ export default {
     drawer: null,
     menus: [
       { name: "Home", icon: "dashboard", url: "/" },
-      { name: "About", icon: "settings", url: "/about" }
+      { name: "About", icon: "error", url: "/about" }
     ]
   })
 };
