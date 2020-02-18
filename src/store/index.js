@@ -10,7 +10,7 @@ export default new Vuex.Store({
 				desc: "Task Description",
 				priority: "hight",
 				assign: "Julio",
-				date: "12/12/2020",
+				date: "2020-12-12",
 				status: "todo"
 			},
 			{
@@ -18,7 +18,7 @@ export default new Vuex.Store({
 				desc: "Task Description 2",
 				priority: "medium",
 				assign: "Julio",
-				date: "12/12/2020",
+				date: "2020-11-11",
 				status: "in-progress"
 			}
 		],

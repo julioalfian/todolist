@@ -5,11 +5,21 @@
         <v-container>
           <v-row>
             <v-col cols="12" md="3">
-              <v-text-field v-model="todos" label="What need to be done?" required></v-text-field>
+              <v-text-field
+                v-model="todos"
+                :rules="[() => todos.length > 0 || 'Required field']"
+                label="What need to be done?"
+                required
+              ></v-text-field>
             </v-col>
 
             <v-col cols="12" md="3">
-              <v-text-field v-model="desc" label="Description" required></v-text-field>
+              <v-text-field
+                v-model="desc"
+                :rules="[() => desc.length > 0 || 'Required field']"
+                label="Description"
+                required
+              ></v-text-field>
             </v-col>
 
             <v-col cols="12" md="2">
@@ -116,11 +126,22 @@
             <v-container>
               <v-row>
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field label="Task" v-model="newtodos" required></v-text-field>
+                  <v-text-field
+                    label="Task"
+                    v-model="newtodos"
+                    :rules="[() => newtodos.length > 0 || 'Required field']"
+                    required
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field label="Description" v-model="newdesc" hint="Describe task in here"></v-text-field>
+                  <v-text-field
+                    label="Description"
+                    v-model="newdesc"
+                    :rules="[() => newdesc.length > 0 || 'Required field']"
+                    hint="Describe task in here"
+                    required
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="6">
