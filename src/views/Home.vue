@@ -258,7 +258,7 @@ export default {
         status: "todos"
       };
       console.log(newList.length);
-      if (newList.task.length > 10) {
+      if (newList.task.length > 0) {
         this.errorMessage = false;
         this.addItemsList(newList);
         this.todos = "";
