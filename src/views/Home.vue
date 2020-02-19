@@ -255,7 +255,7 @@ export default {
         priority: this.priorities,
         assign: this.assign,
         date: this.date,
-        status: "todos"
+        status: "todo"
       };
       console.log(newList.length);
       if (newList.task.length > 0) {
